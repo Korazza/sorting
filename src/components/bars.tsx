@@ -1,22 +1,15 @@
-import { useEffect } from "react"
+import { useEffect, useRef } from "react"
 import { useAnimate, useReducedMotion } from "framer-motion"
 
 import { useControls } from "@/hooks/use-control"
 import { useBreakpoint } from "@/hooks/use-breakpoint"
 import { useAlgorithm } from "@/hooks/use-algorithm"
 import { cn } from "@/lib/utils"
+import { useTheme } from "@/hooks/use-theme"
 
 type BarProps = {
 	value: number
 	index: number
-}
-
-const backgrounds: Record<string, string> = {
-	normal: "linear-gradient(85deg, #31beff 0%, #5451ff 100%)",
-	yellow: "linear-gradient(85deg, #fde62d 0%, #ff8a00 100%)",
-	red: "linear-gradient(85deg, #ff61dc 0%, #e82727 78%)",
-	purple: "linear-gradient(85deg, #d261ff 0%, #8b27e8 78%)",
-	sorted: "linear-gradient(85deg, #65e770 0%, #2bb700d3 78%)",
 }
 
 const Bar = ({ value, index }: BarProps) => {
@@ -24,6 +17,28 @@ const Bar = ({ value, index }: BarProps) => {
 	const { isAbove: isAboveMd } = useBreakpoint("md")
 	const [barRef, animate] = useAnimate()
 	const shouldReduceMotion = useReducedMotion()
+	const { isDark } = useTheme()
+	const backgrounds = useRef<Record<string, string>>({})
+
+	useEffect(() => {
+		backgrounds.current = {
+			normal: isDark
+				? "linear-gradient(85deg, #0092d5 0%, #0400eb 100%)"
+				: "linear-gradient(85deg, #00a6f3 0%, #0c07ff 100%)",
+			yellow: isDark
+				? "linear-gradient(85deg, #cfb802 0%, #b36100 100%)"
+				: "linear-gradient(85deg, #edd202 0%, #d47300 100%)",
+			red: isDark
+				? "linear-gradient(85deg, #f600c0 0%, #ab1212 78%)"
+				: "linear-gradient(85deg, #ff11cb 0%, #c81515 78%)",
+			purple: isDark
+				? "linear-gradient(85deg, #b000f6 0%, #6212ab 78%)"
+				: "linear-gradient(85deg, #bb11ff 0%, #7315c8 78%)",
+			sorted: isDark
+				? "linear-gradient(85deg, #1fc92e 0%, #1e8000d3 78%)"
+				: "linear-gradient(85deg, #26de36 0%, #27a600d3 78%)",
+		}
+	}, [isDark])
 
 	useEffect(() => {
 		animate(
@@ -42,15 +57,15 @@ const Bar = ({ value, index }: BarProps) => {
 			{
 				background: frame
 					? frame.yellowFrame?.includes(index)
-						? backgrounds["yellow"]
+						? backgrounds.current["yellow"]
 						: frame.redFrame?.includes(index)
-						? backgrounds["red"]
+						? backgrounds.current["red"]
 						: frame.purpleFrame?.includes(index)
-						? backgrounds["purple"]
+						? backgrounds.current["purple"]
 						: frame.sortedFrame?.includes(index)
-						? backgrounds["sorted"]
-						: backgrounds["normal"]
-					: backgrounds["normal"],
+						? backgrounds.current["sorted"]
+						: backgrounds.current["normal"]
+					: backgrounds.current["normal"],
 			},
 			{ duration: shouldReduceMotion ? 0 : 0.3 }
 		)
@@ -64,7 +79,11 @@ const Bar = ({ value, index }: BarProps) => {
 					"flex min-h-[26px] min-w-[32px] items-center justify-end rounded-md pr-2 font-semibold text-white drop-shadow md:max-h-max md:min-h-[32px] md:items-start md:justify-center md:py-1 md:pr-0",
 					value == 1 && "justify-center pr-0"
 				)}
-				style={{ textShadow: "0 0 4px rgba(0, 0, 0, 0.3)" }}
+				style={{
+					textShadow: isDark
+						? "0 0 4px rgba(0, 0, 0, 0.3)"
+						: "0 0 3px rgba(0, 0, 0, 0.2)",
+				}}
 			>
 				{value}
 			</div>
