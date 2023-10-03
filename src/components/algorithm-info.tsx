@@ -11,7 +11,7 @@ export const AlgorithmInfo = () => {
 		<main className="flex w-full flex-col px-4 md:max-w-screen-md md:px-0">
 			<article className="mt-6 w-full">
 				<p className="text-base md:text-lg">
-					<span className="mr-2 text-3xl font-semibold">{algorithm.label}</span>
+					<span className="mr-1 text-3xl font-semibold">{algorithm.label}</span>
 					{algorithm.content}
 				</p>
 			</article>
