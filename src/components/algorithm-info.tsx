@@ -9,9 +9,11 @@ export const AlgorithmInfo = () => {
 
 	return (
 		<main className="flex w-full flex-col px-4 md:max-w-screen-md md:px-0">
-			<article className="mt-6 w-full text-lg">
-				<span className="mr-2 text-3xl font-semibold">{algorithm.label}</span>
-				{algorithm.content}
+			<article className="mt-6 w-full">
+				<p className="text-base md:text-lg">
+					<span className="mr-2 text-3xl font-semibold">{algorithm.label}</span>
+					{algorithm.content}
+				</p>
 			</article>
 			<section className="flex flex-row justify-between sm:flex-col md:flex-row md:justify-between">
 				<div>
