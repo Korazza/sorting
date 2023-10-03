@@ -52,7 +52,6 @@ export const ControlsProvider = ({ ...props }: PropsWithChildren) => {
 	const [step, setStep] = useState(0)
 	const intervalId = useRef<NodeJS.Timeout>()
 	const isBackward = useRef(false)
-	const currentStep = useRef(0)
 	const frame = useRef<Frame>()
 	const [animationSpeed, setAnimationSpeed] = useState(500)
 
@@ -73,6 +72,7 @@ export const ControlsProvider = ({ ...props }: PropsWithChildren) => {
 				pause()
 			}
 			setStep(0)
+			frame.current = algorithm.trace.frames[0]
 		}
 	}
 
@@ -136,6 +136,7 @@ export const ControlsProvider = ({ ...props }: PropsWithChildren) => {
 				pause()
 			}
 			setStep(algorithm.trace.frames.length - 1)
+			frame.current = algorithm.trace.frames[algorithm.trace.frames.length - 1]
 		}
 	}
 
@@ -149,10 +150,6 @@ export const ControlsProvider = ({ ...props }: PropsWithChildren) => {
 			)
 		)
 	}, [algorithm, frame, step])
-
-	useEffect(() => {
-		currentStep.current = step
-	}, [step])
 
 	useEffect(() => {
 		if (algorithm) {
