@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { useAnimate } from "framer-motion"
+import { useAnimate, useReducedMotion } from "framer-motion"
 import { ChevronDown } from "lucide-react"
 
 import { cn } from "@/lib/utils"
@@ -26,22 +26,29 @@ export const Select = ({
 	const [isOpen, setIsOpen] = useState(false)
 	const [iconRef, animateIcon] = useAnimate()
 	const [optionsRef, animateOptions] = useAnimate()
+	const shouldReduceMotion = useReducedMotion()
 
 	useEffect(() => {
 		animateIcon(
 			iconRef.current,
 			{ rotate: isOpen ? 180 : 0 },
-			{ duration: 0.15 }
+			{ duration: shouldReduceMotion ? 0 : 0.15 }
 		)
-	}, [animateIcon, iconRef, isOpen])
+	}, [animateIcon, iconRef, isOpen, shouldReduceMotion])
 
 	useEffect(() => {
 		animateOptions(
 			optionsRef.current,
 			{ scaleY: isOpen ? 1 : 0 },
-			{ duration: 0.15, ease: "easeIn" }
+			{ duration: shouldReduceMotion ? 0 : 0.15, ease: "easeInOut" }
 		)
-	}, [animateOptions, optionsRef, isOpen])
+
+		animateOptions(
+			"li",
+			{ opacity: isOpen ? 1.0 : 0.0 },
+			{ duration: shouldReduceMotion ? 0 : 0.3, ease: "backInOut" }
+		)
+	}, [animateOptions, isOpen, optionsRef, shouldReduceMotion])
 
 	const selectOption = (option: SelectOption) => {
 		onChange(option)
