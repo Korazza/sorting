@@ -7,6 +7,6 @@ Sorting visualizer with the following algorithms:
 - Merge sort
 - Quick sort
 
-## Live demo
+[sorting.korazza.com](https://sorting.korazza.com)
 
 [![Screenshot](images/screenshot.png)](https://sorting.korazza.com)
