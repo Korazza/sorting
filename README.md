@@ -65,4 +65,4 @@ In the project directory, you can run the following commands:
 
 ---
 
-*This README was last updated on 2025-06-05.*
+*This README was last updated on 2025-06-05*

@@ -5,10 +5,10 @@ import React from "react"
 import { useControls } from "../use-control"
 import {
 	AlgorithmContext,
-	AlgorithmContextType,
+	AlgorithmContextType, // Changed here
 } from "../../contexts/algorithm"
 import { ControlsProvider } from "../../contexts/controls"
-import { SortingAlgorithm } from "../../lib/sorting-algorithms/sorting-algorithm"
+import { SortingAlgorithm } from "../../lib/sorting-algorithms/sorting-algorithm" // Added import
 
 // Helper to create a more complete mock AlgorithmContext value
 const createMockAlgorithmContextValue = (
