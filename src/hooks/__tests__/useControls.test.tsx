@@ -5,17 +5,17 @@ import React from "react"
 import { useControls } from "../use-control"
 import {
 	AlgorithmContext,
-	AlgorithmContextType, // Changed here
+	AlgorithmContextType,
 } from "../../contexts/algorithm"
 import { ControlsProvider } from "../../contexts/controls"
-import { SortingAlgorithm } from "../../lib/sorting-algorithms/sorting-algorithm" // Added import
+import { SortingAlgorithm } from "../../lib/sorting-algorithms/sorting-algorithm"
 
 // Helper to create a more complete mock AlgorithmContext value
 const createMockAlgorithmContextValue = (
 	framesCount = 10,
 	initialBars = [5, 4, 3, 2, 1]
 ): AlgorithmContextType => {
-	// Changed here
+
 	const frames = Array.from({ length: framesCount }, (_, i) => ({
 		arrayFrame: [...initialBars], // Each frame could have a different array state
 		sortedFrame:
