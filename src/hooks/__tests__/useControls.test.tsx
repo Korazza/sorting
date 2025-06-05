@@ -5,14 +5,17 @@ import React from "react"
 import { useControls } from "../use-control"
 import {
 	AlgorithmContext,
-	AlgorithmContextProps,
+	AlgorithmContextType,
 } from "../../contexts/algorithm"
+import { ControlsProvider } from "../../contexts/controls"
+import { SortingAlgorithm } from "../../lib/sorting-algorithms/sorting-algorithm"
 
 // Helper to create a more complete mock AlgorithmContext value
 const createMockAlgorithmContextValue = (
 	framesCount = 10,
 	initialBars = [5, 4, 3, 2, 1]
-): AlgorithmContextProps => {
+): AlgorithmContextType => {
+
 	const frames = Array.from({ length: framesCount }, (_, i) => ({
 		arrayFrame: [...initialBars], // Each frame could have a different array state
 		sortedFrame:
@@ -25,27 +28,34 @@ const createMockAlgorithmContextValue = (
 		purpleFrame: [],
 	}))
 
+	// Create a distinct object for the trace structure that ControlsProvider expects
+	const traceObject = {
+		frames: frames,
+		get lastSortedFrame() {
+			return this.frames.length > 0
+				? this.frames[this.frames.length - 1].sortedFrame
+				: []
+		},
+	}
+
 	const mockAlgorithmInstance = {
+		// Core properties of SortingAlgorithm
+		_trace: traceObject, // Satisfies the protected field requirement for SortingAlgorithm type
+		get trace() {        // Public getter used by ControlsProvider
+			return this._trace
+		},
 		label: "Mock Sort",
 		content: "A mock sorting algorithm.",
 		timeComplexity: { worst: "N/A", average: "N/A", best: "N/A" },
 		spaceComplexity: "N/A",
-		trace: {
-			frames: frames,
-			// lastSortedFrame is the sortedFrame of the last frame in the trace
-			get lastSortedFrame() {
-				return this.frames.length > 0
-					? this.frames[this.frames.length - 1].sortedFrame
-					: []
-			},
-		},
+		// Abstract methods and other concrete methods, mocked
 		run: vi.fn(),
-		sort: vi.fn(),
+		sort: vi.fn(), // Abstract method
 		swap: vi.fn(),
 	}
 
 	return {
-		algorithm: framesCount > 0 ? mockAlgorithmInstance : undefined,
+		algorithm: framesCount > 0 ? (mockAlgorithmInstance as unknown as SortingAlgorithm) : undefined,
 		setAlgorithm: vi.fn(),
 		initialBarValues: initialBars,
 		framesCount: framesCount, // Kept for direct use if any, though algorithm.trace.frames.length is primary
@@ -54,11 +64,12 @@ const createMockAlgorithmContextValue = (
 	}
 }
 
-let mockAlgorithmContextValue: AlgorithmContextProps
+let mockAlgorithmContextValue: AlgorithmContextType // Changed here
 
-const wrapper = ({ children }: { children: React.ReactNode }) => (
+// This wrapper provides both AlgorithmContext (mocked) and ControlsProvider
+const TestWrapper = ({ children }: { children: React.ReactNode }) => (
 	<AlgorithmContext.Provider value={mockAlgorithmContextValue}>
-		{children}
+		<ControlsProvider>{children}</ControlsProvider>
 	</AlgorithmContext.Provider>
 )
 
@@ -75,7 +86,7 @@ describe("useControls", () => {
 	})
 
 	it("should have correct initial state", () => {
-		const { result } = renderHook(() => useControls(), { wrapper })
+		const { result } = renderHook(() => useControls(), { wrapper: TestWrapper }) // Using TestWrapper
 		expect(result.current.isPlaying).toBe(false)
 		expect(result.current.step).toBe(0)
 		expect(result.current.animationSpeed).toBe(500) // Default speed in ControlsContext
@@ -83,7 +94,9 @@ describe("useControls", () => {
 
 	describe("play action", () => {
 		it("should set isPlaying to true and advance step over time", () => {
-			const { result } = renderHook(() => useControls(), { wrapper })
+			const { result } = renderHook(() => useControls(), {
+				wrapper: TestWrapper,
+			}) // Using TestWrapper
 			expect(result.current.step).toBe(0)
 
 			act(() => {
@@ -104,7 +117,9 @@ describe("useControls", () => {
 
 		it("should not advance step if algorithm is undefined (e.g. framesCount 0 in mock)", () => {
 			mockAlgorithmContextValue = createMockAlgorithmContextValue(0) // 0 frames results in undefined algorithm
-			const { result } = renderHook(() => useControls(), { wrapper })
+			const { result } = renderHook(() => useControls(), {
+				wrapper: TestWrapper,
+			}) // Using TestWrapper
 			act(() => {
 				result.current.play()
 			})
@@ -118,7 +133,9 @@ describe("useControls", () => {
 
 		it("should pause when the last step is reached", () => {
 			mockAlgorithmContextValue = createMockAlgorithmContextValue(2) // 2 frames (step 0, step 1)
-			const { result } = renderHook(() => useControls(), { wrapper })
+			const { result } = renderHook(() => useControls(), {
+				wrapper: TestWrapper,
+			}) // Using TestWrapper
 
 			act(() => {
 				result.current.play()
@@ -144,7 +161,7 @@ describe("useControls", () => {
 	})
 
 	it("pause action should set isPlaying to false", () => {
-		const { result } = renderHook(() => useControls(), { wrapper })
+		const { result } = renderHook(() => useControls(), { wrapper: TestWrapper }) // Using TestWrapper
 		// Ensure it can actually play first
 		if (!mockAlgorithmContextValue.algorithm)
 			throw new Error("Algorithm undefined in mock")
@@ -166,7 +183,9 @@ describe("useControls", () => {
 
 	describe("stepForward action", () => {
 		it("should increment step by 1", () => {
-			const { result } = renderHook(() => useControls(), { wrapper })
+			const { result } = renderHook(() => useControls(), {
+				wrapper: TestWrapper,
+			}) // Using TestWrapper
 			act(() => {
 				result.current.stepForward()
 			})
@@ -175,7 +194,9 @@ describe("useControls", () => {
 
 		it("should not increment step beyond algorithm.trace.frames.length - 1", () => {
 			mockAlgorithmContextValue = createMockAlgorithmContextValue(2) // 2 frames
-			const { result } = renderHook(() => useControls(), { wrapper })
+			const { result } = renderHook(() => useControls(), {
+				wrapper: TestWrapper,
+			}) // Using TestWrapper
 			act(() => {
 				result.current.stepForward()
 			}) // step becomes 1
@@ -188,7 +209,9 @@ describe("useControls", () => {
 
 		it("should do nothing if algorithm is not defined", () => {
 			mockAlgorithmContextValue = createMockAlgorithmContextValue(0)
-			const { result } = renderHook(() => useControls(), { wrapper })
+			const { result } = renderHook(() => useControls(), {
+				wrapper: TestWrapper,
+			}) // Using TestWrapper
 			act(() => {
 				result.current.stepForward()
 			})
@@ -198,7 +221,9 @@ describe("useControls", () => {
 
 	describe("stepBackward action", () => {
 		it("should decrement step by 1 if algorithm exists", () => {
-			const { result } = renderHook(() => useControls(), { wrapper })
+			const { result } = renderHook(() => useControls(), {
+				wrapper: TestWrapper,
+			}) // Using TestWrapper
 			act(() => {
 				result.current.stepForward()
 			})
@@ -214,7 +239,9 @@ describe("useControls", () => {
 		})
 
 		it("should not decrement step below 0", () => {
-			const { result } = renderHook(() => useControls(), { wrapper })
+			const { result } = renderHook(() => useControls(), {
+				wrapper: TestWrapper,
+			}) // Using TestWrapper
 			act(() => {
 				result.current.stepBackward()
 			})
@@ -224,7 +251,9 @@ describe("useControls", () => {
 
 	describe("forward action", () => {
 		it("should set step to algorithm.trace.frames.length - 1", () => {
-			const { result } = renderHook(() => useControls(), { wrapper })
+			const { result } = renderHook(() => useControls(), {
+				wrapper: TestWrapper,
+			}) // Using TestWrapper
 			act(() => {
 				result.current.forward()
 			})
@@ -235,7 +264,9 @@ describe("useControls", () => {
 
 		it("should set step to 0 if algorithm is not defined", () => {
 			mockAlgorithmContextValue = createMockAlgorithmContextValue(0)
-			const { result } = renderHook(() => useControls(), { wrapper })
+			const { result } = renderHook(() => useControls(), {
+				wrapper: TestWrapper,
+			}) // Using TestWrapper
 			act(() => {
 				result.current.forward()
 			})
@@ -244,7 +275,7 @@ describe("useControls", () => {
 	})
 
 	it("backward action should set step to 0 if algorithm exists", () => {
-		const { result } = renderHook(() => useControls(), { wrapper })
+		const { result } = renderHook(() => useControls(), { wrapper: TestWrapper }) // Using TestWrapper
 		act(() => {
 			result.current.stepForward()
 		})
@@ -260,7 +291,7 @@ describe("useControls", () => {
 	})
 
 	it("reset action should reset state and call resetBars", () => {
-		const { result } = renderHook(() => useControls(), { wrapper })
+		const { result } = renderHook(() => useControls(), { wrapper: TestWrapper }) // Using TestWrapper
 		act(() => {
 			result.current.play()
 		})
@@ -280,7 +311,7 @@ describe("useControls", () => {
 	})
 
 	it("setAnimationSpeed action should update animationSpeed", () => {
-		const { result } = renderHook(() => useControls(), { wrapper })
+		const { result } = renderHook(() => useControls(), { wrapper: TestWrapper }) // Using TestWrapper
 		const newSpeed = 1000
 		act(() => {
 			result.current.setAnimationSpeed(newSpeed)

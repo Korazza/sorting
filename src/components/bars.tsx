@@ -100,7 +100,7 @@ export const Bars = () => {
 			{(frame && frame.arrayFrame.length > 0 && step > 0
 				? frame.arrayFrame
 				: initialBarValues
-			).map((value, index) => (
+			).map((value: number, index: number) => (
 				<Bar key={index} value={value} index={index} />
 			))}
 		</section>

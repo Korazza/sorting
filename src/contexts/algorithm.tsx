@@ -10,7 +10,7 @@ import { useBreakpoint } from "@/hooks/use-breakpoint"
 import { SortingAlgorithm } from "@/lib/sorting-algorithms"
 import { getRandom } from "@/lib/utils"
 
-type AlgorithmContextType = {
+export type AlgorithmContextType = {
 	initialBarValues: number[]
 	resetBars: () => void
 	algorithm: SortingAlgorithm | undefined

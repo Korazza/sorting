@@ -1,6 +1,6 @@
 import { useContext } from "react"
 
-import { AlgorithmContext, AlgorithmContextProps } from "@/contexts/algorithm"
+import { AlgorithmContext, AlgorithmContextType } from "@/contexts/algorithm"
 
 /**
  * Custom hook for accessing the algorithm state from `AlgorithmContext`.
@@ -14,9 +14,9 @@ import { AlgorithmContext, AlgorithmContextProps } from "@/contexts/algorithm"
  * It's a shorthand for `useContext(AlgorithmContext)`.
  * Ensure this hook is used within a component tree wrapped by `AlgorithmProvider`.
  *
- * @returns {AlgorithmContextProps} The algorithm context value.
+ * @returns {AlgorithmContextType} The algorithm context value.
  * @see {@link AlgorithmContext}
  * @see {@link AlgorithmProvider}
  */
-export const useAlgorithm = (): AlgorithmContextProps =>
+export const useAlgorithm = (): AlgorithmContextType =>
 	useContext(AlgorithmContext)

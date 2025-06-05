@@ -21,8 +21,8 @@ export const Progress = ({ value, min, max }: ProgressProps) => {
 			className="flex w-full flex-1 items-center justify-start rounded-lg bg-background-light p-neu shadow-neu transition-[width] dark:bg-background-dark dark:shadow-neu-dark"
 			role="progressbar"
 			aria-valuenow={progress}
-			aria-valuemin="0"
-			aria-valuemax="100"
+			aria-valuemin={0}
+			aria-valuemax={100}
 			aria-label="Sorting animation progress"
 		>
 			<div

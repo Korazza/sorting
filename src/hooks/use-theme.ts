@@ -1,6 +1,6 @@
 import { useContext } from "react"
 
-import { ThemeContext, ThemeContextProps } from "@/contexts/theme"
+import { ThemeContext, ThemeContextType } from "@/contexts/theme"
 
 /**
  * Custom hook for accessing the theme state from `ThemeContext`.
@@ -13,8 +13,8 @@ import { ThemeContext, ThemeContextProps } from "@/contexts/theme"
  * It's a shorthand for `useContext(ThemeContext)`.
  * Ensure this hook is used within a component tree wrapped by `ThemeProvider`.
  *
- * @returns {ThemeContextProps} The theme context value.
+ * @returns {ThemeContextType} The theme context value.
  * @see {@link ThemeContext}
  * @see {@link ThemeProvider}
  */
-export const useTheme = (): ThemeContextProps => useContext(ThemeContext)
+export const useTheme = (): ThemeContextType => useContext(ThemeContext)

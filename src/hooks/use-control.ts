@@ -1,6 +1,6 @@
 import { useContext } from "react"
 
-import { ControlsContext, ControlsContextProps } from "@/contexts/controls"
+import { ControlsContext, ControlsContextType } from "@/contexts/controls"
 
 /**
  * Custom hook for accessing the controls state from `ControlsContext`.
@@ -22,9 +22,9 @@ import { ControlsContext, ControlsContextProps } from "@/contexts/controls"
  * It's a shorthand for `useContext(ControlsContext)`.
  * Ensure this hook is used within a component tree wrapped by `ControlsProvider`.
  *
- * @returns {ControlsContextProps} The controls context value.
+ * @returns {ControlsContextType} The controls context value.
  * @see {@link ControlsContext}
  * @see {@link ControlsProvider}
  */
-export const useControls = (): ControlsContextProps =>
+export const useControls = (): ControlsContextType =>
 	useContext(ControlsContext)
