@@ -10,7 +10,7 @@ import {
 import { useAlgorithm } from "@/hooks/use-algorithm"
 import { Frame } from "@/types"
 
-type ControlsContextType = {
+export type ControlsContextType = {
 	isPlaying: boolean
 	isSorted: boolean
 	step: number

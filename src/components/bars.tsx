@@ -59,12 +59,12 @@ const Bar = ({ value, index }: BarProps) => {
 					? frame.yellowFrame?.includes(index)
 						? backgrounds.current["yellow"]
 						: frame.redFrame?.includes(index)
-						? backgrounds.current["red"]
-						: frame.purpleFrame?.includes(index)
-						? backgrounds.current["purple"]
-						: frame.sortedFrame?.includes(index)
-						? backgrounds.current["sorted"]
-						: backgrounds.current["normal"]
+							? backgrounds.current["red"]
+							: frame.purpleFrame?.includes(index)
+								? backgrounds.current["purple"]
+								: frame.sortedFrame?.includes(index)
+									? backgrounds.current["sorted"]
+									: backgrounds.current["normal"]
 					: backgrounds.current["normal"],
 			},
 			{ duration: shouldReduceMotion ? 0 : 0.3 }
@@ -76,7 +76,7 @@ const Bar = ({ value, index }: BarProps) => {
 			<div
 				ref={barRef}
 				className={cn(
-					"flex min-h-[26px] min-w-[32px] items-center justify-end rounded-md pr-2 font-semibold text-white drop-shadow md:max-h-max md:min-h-[32px] md:items-start md:justify-center md:py-1 md:pr-0",
+					"flex items-center justify-end rounded-md pr-2 font-semibold text-white drop-shadow md:max-h-max md:items-start md:justify-center md:py-1 md:pr-0",
 					value == 1 && "justify-center pr-0"
 				)}
 				style={{
@@ -100,7 +100,7 @@ export const Bars = () => {
 			{(frame && frame.arrayFrame.length > 0 && step > 0
 				? frame.arrayFrame
 				: initialBarValues
-			).map((value, index) => (
+			).map((value: number, index: number) => (
 				<Bar key={index} value={value} index={index} />
 			))}
 		</section>
