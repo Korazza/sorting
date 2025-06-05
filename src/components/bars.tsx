@@ -59,12 +59,12 @@ const Bar = ({ value, index }: BarProps) => {
 					? frame.yellowFrame?.includes(index)
 						? backgrounds.current["yellow"]
 						: frame.redFrame?.includes(index)
-						? backgrounds.current["red"]
-						: frame.purpleFrame?.includes(index)
-						? backgrounds.current["purple"]
-						: frame.sortedFrame?.includes(index)
-						? backgrounds.current["sorted"]
-						: backgrounds.current["normal"]
+							? backgrounds.current["red"]
+							: frame.purpleFrame?.includes(index)
+								? backgrounds.current["purple"]
+								: frame.sortedFrame?.includes(index)
+									? backgrounds.current["sorted"]
+									: backgrounds.current["normal"]
 					: backgrounds.current["normal"],
 			},
 			{ duration: shouldReduceMotion ? 0 : 0.3 }

@@ -77,7 +77,7 @@ export const UpperControls = () => {
 					Reset <RotateCw className="ml-2 w-5" />
 				</Button>
 				<Tooltip label={Theme[theme]} className="capitalize">
-					<Button onClick={toggleTheme}>
+					<Button onClick={toggleTheme} aria-label="Toggle theme">
 						{theme === Theme.system ? (
 							<MoonStar className="w-5 text-sky-500 dark:text-sky-600" />
 						) : theme === Theme.light ? (
@@ -96,6 +96,7 @@ export const UpperControls = () => {
 				onClick={() => {
 					window.scrollTo({ top: window.innerHeight })
 				}}
+				aria-label="Scroll to controls"
 			>
 				<ChevronsDown ref={downIconRef} className="w-6" />
 			</Button>
