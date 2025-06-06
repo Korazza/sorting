@@ -15,7 +15,6 @@ const createMockAlgorithmContextValue = (
 	framesCount = 10,
 	initialBars = [5, 4, 3, 2, 1]
 ): AlgorithmContextType => {
-	// Changed here
 	const frames = Array.from({ length: framesCount }, (_, i) => ({
 		arrayFrame: [...initialBars], // Each frame could have a different array state
 		sortedFrame:

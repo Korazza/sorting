@@ -65,5 +65,4 @@ In the project directory, you can run the following commands:
 
 ---
 
-*This README was last updated on YYYY-MM-DD.*
-*(Consider replacing YYYY-MM-DD with the actual date or removing this line)*
+*This README was last updated on 2025-06-05*
