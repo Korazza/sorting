@@ -3,7 +3,7 @@ import { PropsWithChildren, createContext, useEffect, useState } from "react"
 import { Theme } from "@/types"
 import { useLocalStorage } from "@/hooks/use-local-storage"
 
-type ThemeContextType = {
+export type ThemeContextType = {
 	theme: Theme
 	isDark: boolean
 	toggleTheme: () => void

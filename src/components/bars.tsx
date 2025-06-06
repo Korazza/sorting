@@ -15,7 +15,14 @@ type BarProps = {
 const Bar = ({ value, index }: BarProps) => {
 	const { frame } = useControls()
 	const { isAbove: isAboveMd } = useBreakpoint("md")
-	const [barRef, animate] = useAnimate()
+	// Rename barRef to barContainerRef for the container div
+	// The useAnimate hook can remain associated with barContainerRef if needed for container-level animations,
+	// or a new one can be created for visualBarRef if preferred.
+	// For this refactor, let's assume animate function from useAnimate will target visualBarRef.
+	const [, animate] = useAnimate() // scope is not needed as we pass the ref to animate() directly
+	const barContainerRef = useRef<HTMLDivElement>(null) // Ref for the main container of a bar slot
+	const visualBarRef = useRef<HTMLDivElement>(null) // Ref for the actual visual bar element
+
 	const shouldReduceMotion = useReducedMotion()
 	const { isDark } = useTheme()
 	const backgrounds = useRef<Record<string, string>>({})
@@ -40,52 +47,76 @@ const Bar = ({ value, index }: BarProps) => {
 		}
 	}, [isDark])
 
+	// useEffect for height/width animation, targeting visualBarRef
 	useEffect(() => {
+		if (!visualBarRef.current) return
 		animate(
-			barRef.current,
+			visualBarRef.current,
 			{
 				height: isAboveMd ? `${value}%` : "100%",
 				width: isAboveMd ? "100%" : `${value}%`,
 			},
 			{ duration: shouldReduceMotion ? 0 : 0.3 }
 		)
-	}, [barRef, animate, value, isAboveMd, shouldReduceMotion])
+	}, [animate, value, isAboveMd, shouldReduceMotion])
 
+	// useEffect for background color animation, targeting visualBarRef
 	useEffect(() => {
+		if (!visualBarRef.current) return
 		animate(
-			barRef.current,
+			visualBarRef.current,
 			{
 				background: frame
 					? frame.yellowFrame?.includes(index)
 						? backgrounds.current["yellow"]
 						: frame.redFrame?.includes(index)
-						? backgrounds.current["red"]
-						: frame.purpleFrame?.includes(index)
-						? backgrounds.current["purple"]
-						: frame.sortedFrame?.includes(index)
-						? backgrounds.current["sorted"]
-						: backgrounds.current["normal"]
+							? backgrounds.current["red"]
+							: frame.purpleFrame?.includes(index)
+								? backgrounds.current["purple"]
+								: frame.sortedFrame?.includes(index)
+									? backgrounds.current["sorted"]
+									: backgrounds.current["normal"]
 					: backgrounds.current["normal"],
 			},
 			{ duration: shouldReduceMotion ? 0 : 0.3 }
 		)
-	}, [animate, frame, index, barRef, shouldReduceMotion])
+	}, [animate, frame, index, shouldReduceMotion])
 
+	// This is the main slot div provided by the parent Bars component's map
 	return (
 		<div className="flex flex-1 items-center justify-start md:items-end md:justify-center">
+			{/* containerDiv */}
 			<div
-				ref={barRef}
+				ref={barContainerRef}
 				className={cn(
-					"flex min-h-[26px] min-w-[32px] items-center justify-end rounded-md pr-2 font-semibold text-white drop-shadow md:max-h-max md:min-h-[32px] md:items-start md:justify-center md:py-1 md:pr-0",
-					value == 1 && "justify-center pr-0"
+					"relative flex w-full h-full items-center justify-center", // Ensures text is centered
+					"min-h-[26px] min-w-[32px] md:min-h-[32px]" // Keeps minimum clickable/touch area
 				)}
-				style={{
-					textShadow: isDark
-						? "0 0 4px rgba(0, 0, 0, 0.3)"
-						: "0 0 3px rgba(0, 0, 0, 0.2)",
-				}}
 			>
-				{value}
+				{/* visualBarDiv */}
+				<div
+					ref={visualBarRef}
+					className={cn(
+						"absolute rounded-md",
+						isAboveMd ? "origin-bottom" : "origin-left" // Correct origin for animation
+					)}
+					style={
+						isAboveMd
+							? { bottom: 0, left: 0, right: 0 } // Vertical bar, width 100%
+							: { top: 0, left: 0, bottom: 0 }   // Horizontal bar, height 100%
+					}
+				/>
+				{/* Text Value Span */}
+				<span
+					className="relative z-10 font-semibold text-white drop-shadow"
+					style={{
+						textShadow: isDark
+							? "0 0 4px rgba(0, 0, 0, 0.3)"
+							: "0 0 3px rgba(0, 0, 0, 0.2)",
+					}}
+				>
+					{value}
+				</span>
 			</div>
 		</div>
 	)
@@ -100,7 +131,7 @@ export const Bars = () => {
 			{(frame && frame.arrayFrame.length > 0 && step > 0
 				? frame.arrayFrame
 				: initialBarValues
-			).map((value, index) => (
+			).map((value: number, index: number) => (
 				<Bar key={index} value={value} index={index} />
 			))}
 		</section>

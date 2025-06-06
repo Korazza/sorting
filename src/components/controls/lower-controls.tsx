@@ -40,19 +40,22 @@ export const LowerControls = () => {
 				<Progress min={0} max={framesCount} value={step} />
 			</div>
 			<div className="flex justify-center space-x-6 md:space-x-8">
-				<Button onClick={backward}>
+				<Button onClick={backward} aria-label="Go to beginning">
 					<SkipBack className="w-5" />
 				</Button>
-				<Button onClick={stepBackward}>
+				<Button onClick={stepBackward} aria-label="Step backward">
 					<StepBack className="w-5" />
 				</Button>
-				<Button onClick={playing ? pause : play}>
+				<Button
+					onClick={playing ? pause : play}
+					aria-label={playing ? "Pause" : "Play"}
+				>
 					{playing ? <Pause className="w-5" /> : <Play className="w-5" />}
 				</Button>
-				<Button onClick={stepForward}>
+				<Button onClick={stepForward} aria-label="Step forward">
 					<StepForward className="w-5" />
 				</Button>
-				<Button onClick={forward}>
+				<Button onClick={forward} aria-label="Go to end">
 					<SkipForward className="w-5" />
 				</Button>
 			</div>

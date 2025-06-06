@@ -54,13 +54,38 @@ export const Select = ({
 		onChange(option)
 	}
 
+	const handleWrapperKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+		if (e.key === "Enter" || e.key === " ") {
+			e.preventDefault()
+			setIsOpen((prev) => !prev)
+		}
+	}
+
+	const handleOptionKeyDown = (
+		e: React.KeyboardEvent<HTMLLIElement>,
+		option: SelectOption
+	) => {
+		if (e.key === "Enter" || e.key === " ") {
+			e.preventDefault()
+			e.stopPropagation()
+			selectOption(option)
+			setIsOpen(false)
+		}
+	}
+
 	return (
 		<div
+			tabIndex={0}
+			role="combobox"
+			aria-haspopup="listbox"
+			aria-expanded={isOpen}
+			aria-label={placeholder}
 			className={cn(
 				"relative cursor-pointer rounded-lg p-neu shadow-neu transition-[border-bottom-right-radius_border-bottom-left-radius] dark:shadow-neu-dark",
 				isOpen && "rounded-b-none"
 			)}
 			onClick={() => setIsOpen((prev) => !prev)}
+			onKeyDown={handleWrapperKeyDown}
 			onBlur={() => setIsOpen(false)}
 		>
 			<span
@@ -74,13 +99,17 @@ export const Select = ({
 			</span>
 			<ul
 				ref={optionsRef}
+				role="listbox"
 				className="absolute left-0 top-full z-10 w-full origin-top scale-y-0 flex-col rounded-b-lg bg-background-light drop-shadow-xl transition-transform dark:bg-background-dark"
 			>
 				{options.map((option) => (
 					<li
 						key={option.label}
+						role="option"
+						aria-selected={selected?.label === option.label}
+						tabIndex={0} // Make options focusable
 						className={cn(
-							"cursor-pointer py-2 text-center text-text-light hover:bg-background-dark/5 group-hover:block dark:text-text-dark hover:dark:bg-background-light/5",
+							"cursor-pointer py-2 text-center text-text-light hover:bg-background-dark/5 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 group-hover:block dark:text-text-dark hover:dark:bg-background-light/5",
 							selected?.label === option.label &&
 								"bg-background-dark/10 hover:bg-background-dark/10 dark:bg-background-light/10 hover:dark:bg-background-light/10"
 						)}
@@ -89,6 +118,7 @@ export const Select = ({
 							selectOption(option)
 							setIsOpen(false)
 						}}
+						onKeyDown={(e) => handleOptionKeyDown(e, option)}
 					>
 						{option.label}
 					</li>
